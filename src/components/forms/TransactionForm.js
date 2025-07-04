@@ -4,17 +4,27 @@ import { Button } from "@/components/ui/button";
 import { CATEGORIES } from "@/lib/constants";
 
 export default function TransactionForm({ onAdd, editing, setEditing }) {
-  const [form, setForm] = useState({
+  const defaultForm = {
     amount: "",
     description: "",
     date: "",
     category: "Other",
-  });
+  };
 
+  const [form, setForm] = useState(defaultForm);
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    if (editing) setForm(editing);
+    if (editing && editing._id) {
+      setForm({
+        amount: editing.amount?.toString() ?? "",
+        description: editing.description ?? "",
+        date: editing.date ?? "",
+        category: editing.category ?? "Other",
+      });
+    } else {
+      setForm(defaultForm);
+    }
   }, [editing]);
 
   const validate = () => {
@@ -33,16 +43,19 @@ export default function TransactionForm({ onAdd, editing, setEditing }) {
   };
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: "" });
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
 
-    const method = editing ? "PUT" : "POST";
-    const url = editing ? `/api/transactions/${editing._id}` : "/api/transactions";
+    const method = editing && editing._id ? "PUT" : "POST";
+    const url = editing && editing._id
+      ? `/api/transactions/${editing._id}`
+      : "/api/transactions";
 
     await fetch(url, {
       method,
@@ -50,9 +63,15 @@ export default function TransactionForm({ onAdd, editing, setEditing }) {
       body: JSON.stringify(form),
     });
 
-    setForm({ amount: "", description: "", date: "", category: "Other" });
+    setForm(defaultForm);
     setEditing(null);
     onAdd();
+  };
+
+  const handleCancel = () => {
+    setForm(defaultForm);
+    setErrors({});
+    setEditing(null);
   };
 
   return (
@@ -115,21 +134,12 @@ export default function TransactionForm({ onAdd, editing, setEditing }) {
       </div>
 
       {/* Buttons */}
-      <div className="flex gap-2">
-        <Button type="submit" className="cursor-pointer">
-          {editing ? "Update" : "Add"} Transaction
+      <div className="flex gap-2 justify-end">
+        <Button type="submit">
+          {editing && editing._id ? "Update" : "Add"} Transaction
         </Button>
         {editing && (
-          <Button
-            type="button"
-            variant="secondary"
-            className="cursor-pointer"
-            onClick={() => {
-              setEditing(null);
-              setForm({ amount: "", description: "", date: "", category: "Other" });
-              setErrors({});
-            }}
-          >
+          <Button type="button" variant="secondary" onClick={handleCancel}>
             Cancel
           </Button>
         )}

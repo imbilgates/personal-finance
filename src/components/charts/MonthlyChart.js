@@ -26,7 +26,6 @@ export default function MonthlyChart({ transactions }) {
 
   return (
     <div>
-      <h2 className="text-xl font-semibold mb-2">Monthly Expenses</h2>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={chartData}>
           <XAxis dataKey="month" />

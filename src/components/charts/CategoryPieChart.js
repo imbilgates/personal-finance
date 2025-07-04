@@ -17,7 +17,6 @@ export default function CategoryPieChart({ transactions }) {
 
   return (
     <div>
-      <h2 className="text-xl font-semibold mb-2">Spending by Category</h2>
       <PieChart width={320} height={320}>
         <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100}>
           {data.map((_, index) => (

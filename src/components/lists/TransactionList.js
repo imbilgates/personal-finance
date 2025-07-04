@@ -1,13 +1,20 @@
 "use client";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import TransactionModal from "@/components/modals/TransactionModal";
 
-export default function TransactionList({ transactions, onDelete, onEdit, editing }) {
+export default function TransactionList({ transactions, onDelete, onEdit, editing, onAdd }) {
+  const [open, setOpen] = useState(false);
+
+  const handleEdit = (tx) => {
+    onEdit(tx);
+    setOpen(true);
+  };
+
   return (
     <div className="w-full">
-      <h2 className="text-xl font-semibold mb-4">Transactions</h2>
-
-      {/* Header */}
-      <div className="hidden sm:grid grid-cols-[100px_120px_120px_1fr_auto] font-medium text-sm text-gray-600 dark:text-gray-300 px-4 py-2 border-b">
+      {/* Header with increased spacing */}
+      <div className="hidden sm:grid grid-cols-[100px_140px_140px_1fr_auto] font-medium text-sm text-gray-600 dark:text-gray-300 px-4 py-2 border-b gap-8">
         <span>Amount</span>
         <span>Category</span>
         <span>Date</span>
@@ -22,7 +29,7 @@ export default function TransactionList({ transactions, onDelete, onEdit, editin
           return (
             <li
               key={tx._id}
-              className={`grid grid-cols-1 sm:grid-cols-[100px_120px_120px_1fr_auto] items-center gap-2 sm:gap-4 px-4 py-3 rounded-lg border transition-colors ${
+              className={`grid grid-cols-1 sm:grid-cols-[100px_140px_140px_1fr_auto] items-start gap-4 sm:gap-8 px-4 py-3 rounded-lg border transition-colors ${
                 isEditing
                   ? "bg-blue-100 dark:bg-blue-900"
                   : "hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -39,27 +46,24 @@ export default function TransactionList({ transactions, onDelete, onEdit, editin
               <span className="text-sm text-gray-800 dark:text-gray-100">{tx.description}</span>
 
               <div className="flex gap-2 justify-end">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="cursor-pointer"
-                  onClick={() => onEdit(tx)}
-                >
-                  Edit
-                </Button>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  className="cursor-pointer"
-                  onClick={() => onDelete(tx._id)}
-                >
-                  Delete
-                </Button>
+                <Button variant="outline" size="sm" onClick={() => handleEdit(tx)}>Edit</Button>
+                <Button variant="destructive" size="sm" onClick={() => onDelete(tx._id)}>Delete</Button>
               </div>
             </li>
           );
         })}
       </ul>
+
+      {/* Modal for edit/add transaction */}
+      <TransactionModal
+        editing={editing}
+        onAdd={onAdd}
+        open={open}
+        onClose={() => {
+          setOpen(false);
+          onEdit(null);
+        }}
+      />
     </div>
   );
 }
