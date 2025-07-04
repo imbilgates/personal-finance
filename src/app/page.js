@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import TransactionForm from "@/components/TransactionForm";
 import TransactionList from "@/components/TransactionList";
 import MonthlyChart from "@/components/MonthlyChart";
@@ -9,6 +9,7 @@ import SummaryCards from "@/components/SummaryCards";
 export default function Home() {
   const [transactions, setTransactions] = useState([]);
   const [editing, setEditing] = useState(null);
+  const formRef = useRef(null);
 
   const fetchData = async () => {
     const res = await fetch("/api/transactions");
@@ -26,6 +27,12 @@ export default function Home() {
   };
 
   useEffect(() => {
+    if (editing && formRef.current) {
+      formRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [editing]);
+
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -37,7 +44,7 @@ export default function Home() {
 
       <SummaryCards transactions={transactions} />
 
-      <section>
+      <section ref={formRef}>
         <h2 className="text-xl font-semibold mb-2">
           {editing ? "Edit Transaction" : "Add Transaction"}
         </h2>
