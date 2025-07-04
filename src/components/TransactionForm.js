@@ -1,71 +1,63 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { CATEGORIES } from "@/lib/constants";
 
 export default function TransactionForm({ onAdd, editing, setEditing }) {
   const [form, setForm] = useState({
     amount: "",
     description: "",
     date: "",
+    category: "Other",
   });
 
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    if (editing) {
-      setForm(editing);
-    }
+    if (editing) setForm(editing);
   }, [editing]);
 
   const validate = () => {
     const newErrors = {};
-
     if (!form.amount || isNaN(form.amount) || Number(form.amount) <= 0) {
       newErrors.amount = "Amount must be a positive number.";
     }
-
     if (!form.description || form.description.trim().length < 3) {
       newErrors.description = "Description must be at least 3 characters.";
     }
-
     if (!form.date) {
       newErrors.date = "Please select a valid date.";
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: "" }); // Clear error on input
+    setErrors({ ...errors, [e.target.name]: "" });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
 
-    if (editing) {
-      await fetch(`/api/transactions/${editing._id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      setEditing(null);
-    } else {
-      await fetch("/api/transactions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-    }
+    const method = editing ? "PUT" : "POST";
+    const url = editing ? `/api/transactions/${editing._id}` : "/api/transactions";
 
-    setForm({ amount: "", description: "", date: "" });
+    await fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+
+    setForm({ amount: "", description: "", date: "", category: "Other" });
+    setEditing(null);
     onAdd();
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Amount Input */}
       <div>
         <input
           type="number"
@@ -73,13 +65,12 @@ export default function TransactionForm({ onAdd, editing, setEditing }) {
           placeholder="Amount"
           value={form.amount}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className="w-full p-2 rounded-md border border-gray-300 bg-white dark:bg-gray-900 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
         />
-        {errors.amount && (
-          <p className="text-red-500 text-sm mt-1">{errors.amount}</p>
-        )}
+        {errors.amount && <p className="text-red-500 text-sm mt-1">{errors.amount}</p>}
       </div>
 
+      {/* Description Input */}
       <div>
         <input
           type="text"
@@ -87,29 +78,46 @@ export default function TransactionForm({ onAdd, editing, setEditing }) {
           placeholder="Description"
           value={form.description}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className="w-full p-2 rounded-md border border-gray-300 bg-white dark:bg-gray-900 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
         />
-        {errors.description && (
-          <p className="text-red-500 text-sm mt-1">{errors.description}</p>
-        )}
+        {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
       </div>
 
+      {/* Date Input */}
       <div>
         <input
           type="date"
           name="date"
           value={form.date}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className="w-full p-2 rounded-md border border-gray-300 bg-white dark:bg-gray-900 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
         />
-        {errors.date && (
-          <p className="text-red-500 text-sm mt-1">{errors.date}</p>
-        )}
+        {errors.date && <p className="text-red-500 text-sm mt-1">{errors.date}</p>}
       </div>
 
+      {/* Category Dropdown */}
+      <div>
+        <select
+          name="category"
+          value={form.category}
+          onChange={handleChange}
+          className="w-full p-2 rounded-md border border-gray-300 bg-white dark:bg-gray-900 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+        >
+          <option disabled value="">
+            Select Category
+          </option>
+          {CATEGORIES.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Buttons */}
       <div className="flex gap-2">
         <Button type="submit" className="cursor-pointer">
-          {editing ? "Update Transaction" : "Add Transaction"}
+          {editing ? "Update" : "Add"} Transaction
         </Button>
         {editing && (
           <Button
@@ -118,7 +126,7 @@ export default function TransactionForm({ onAdd, editing, setEditing }) {
             className="cursor-pointer"
             onClick={() => {
               setEditing(null);
-              setForm({ amount: "", description: "", date: "" });
+              setForm({ amount: "", description: "", date: "", category: "Other" });
               setErrors({});
             }}
           >

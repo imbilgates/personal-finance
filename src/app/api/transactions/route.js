@@ -10,6 +10,17 @@ export async function GET() {
 export async function POST(request) {
   await dbConnect();
   const data = await request.json();
-  const transaction = await Transaction.create(data);
+
+  if (!data.amount || !data.description || !data.date) {
+    return new Response(JSON.stringify({ error: "Missing fields" }), { status: 400 });
+  }
+
+  const transaction = await Transaction.create({
+    amount: data.amount,
+    description: data.description,
+    date: data.date,
+    category: data.category || "Other",
+  });
+
   return Response.json(transaction);
 }

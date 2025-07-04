@@ -4,6 +4,7 @@ const TransactionSchema = new mongoose.Schema({
   amount: Number,
   description: String,
   date: String,
+  category: { type: String, default: "Other" },
 }, {
   timestamps: true,
 });
