@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { useFinance } from "@/context/FinanceContext";
 import { useLoadingButton } from "@/hooks/useLoadingButton";
-import { formatMonthYear } from "@/lib/utils/formatMonth"; 
+import { formatMonthYear } from "@/lib/utils/formatMonth";
+import { showToast } from "@/lib/utils/toastUtils"; // ✅ import toast
 
 export default function BudgetList({ budgets, onEdit, highlightedId }) {
   const { fetchBudgets } = useFinance();
@@ -14,8 +15,15 @@ export default function BudgetList({ budgets, onEdit, highlightedId }) {
   const handleDelete = (id) => {
     setDeletingId(id);
     wrap(async () => {
-      await fetch(`/api/budgets/${id}`, { method: "DELETE" });
-      await fetchBudgets();
+      const res = await fetch(`/api/budgets/${id}`, { method: "DELETE" });
+
+      if (res.ok) {
+        showToast({ type: "success", message: "Budget deleted successfully" });
+        await fetchBudgets();
+      } else {
+        showToast({ type: "error", message: "Failed to delete budget" });
+      }
+
       setDeletingId(null);
     });
   };

@@ -1,11 +1,24 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CATEGORIES } from "@/lib/constants";
 import { Loader2 } from "lucide-react";
+import { showToast } from "@/lib/utils/toastUtils";
 
-export default function TransactionForm({ onAdd, editing, setEditing, wrap, loading }) {
-  const defaultForm = { amount: "", description: "", date: "", category: "Other" };
+export default function TransactionForm({
+  onAdd,
+  editing,
+  setEditing,
+  wrap,
+  loading,
+}) {
+  const defaultForm = {
+    amount: "",
+    description: "",
+    date: "",
+    category: "Other",
+  };
+
   const [form, setForm] = useState(defaultForm);
   const [errors, setErrors] = useState({});
 
@@ -48,20 +61,36 @@ export default function TransactionForm({ onAdd, editing, setEditing, wrap, load
     if (!validate()) return;
 
     wrap(async () => {
-      const method = editing && editing._id ? "PUT" : "POST";
-      const url = editing && editing._id
+      const isEdit = editing && editing._id;
+      const method = isEdit ? "PUT" : "POST";
+      const url = isEdit
         ? `/api/transactions/${editing._id}`
         : "/api/transactions";
 
-      await fetch(url, {
+      const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
 
-      setForm(defaultForm);
-      setEditing(null);
-      onAdd();
+      if (res.ok) {
+        showToast({
+          type: "success",
+          message: isEdit
+            ? "Transaction updated successfully"
+            : "Transaction added successfully",
+        });
+        setForm(defaultForm);
+        setEditing(null);
+        onAdd();
+      } else {
+        showToast({
+          type: "error",
+          message: isEdit
+            ? "Failed to update transaction"
+            : "Failed to add transaction",
+        });
+      }
     });
   };
 
@@ -83,7 +112,9 @@ export default function TransactionForm({ onAdd, editing, setEditing, wrap, load
           onChange={handleChange}
           className="w-full p-2 rounded-md border"
         />
-        {errors.amount && <p className="text-red-500 text-sm mt-1">{errors.amount}</p>}
+        {errors.amount && (
+          <p className="text-red-500 text-sm mt-1">{errors.amount}</p>
+        )}
       </div>
 
       {/* Description Input */}
@@ -96,7 +127,9 @@ export default function TransactionForm({ onAdd, editing, setEditing, wrap, load
           onChange={handleChange}
           className="w-full p-2 rounded-md border"
         />
-        {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
+        {errors.description && (
+          <p className="text-red-500 text-sm mt-1">{errors.description}</p>
+        )}
       </div>
 
       {/* Date Input */}
@@ -108,7 +141,9 @@ export default function TransactionForm({ onAdd, editing, setEditing, wrap, load
           onChange={handleChange}
           className="w-full p-2 rounded-md border"
         />
-        {errors.date && <p className="text-red-500 text-sm mt-1">{errors.date}</p>}
+        {errors.date && (
+          <p className="text-red-500 text-sm mt-1">{errors.date}</p>
+        )}
       </div>
 
       {/* Category Dropdown */}
@@ -137,7 +172,12 @@ export default function TransactionForm({ onAdd, editing, setEditing, wrap, load
           {editing && editing._id ? "Update" : "Add"} Transaction
         </Button>
         {editing && (
-          <Button type="button" variant="secondary" onClick={handleCancel} disabled={loading}>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={handleCancel}
+            disabled={loading}
+          >
             Cancel
           </Button>
         )}

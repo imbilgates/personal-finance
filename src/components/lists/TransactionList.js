@@ -5,6 +5,7 @@ import TransactionModal from "@/components/modals/TransactionModal";
 import { useFinance } from "@/context/FinanceContext";
 import { useLoadingButton } from "@/hooks/useLoadingButton";
 import { Loader2 } from "lucide-react";
+import { showToast } from "@/lib/utils/toastUtils"; // ✅ import toast
 
 export default function TransactionList({ transactions, onEdit, editing, onAdd }) {
   const [open, setOpen] = useState(false);
@@ -20,8 +21,15 @@ export default function TransactionList({ transactions, onEdit, editing, onAdd }
   const handleDelete = (id) => {
     setDeletingId(id);
     wrap(async () => {
-      await fetch(`/api/transactions/${id}`, { method: "DELETE" });
-      await fetchTransactions();
+      const res = await fetch(`/api/transactions/${id}`, { method: "DELETE" });
+
+      if (res.ok) {
+        showToast({ type: "success", message: "Transaction deleted successfully" });
+        await fetchTransactions();
+      } else {
+        showToast({ type: "error", message: "Failed to delete transaction" });
+      }
+
       setDeletingId(null);
     });
   };
@@ -51,7 +59,9 @@ export default function TransactionList({ transactions, onEdit, editing, onAdd }
                   : "hover:bg-gray-100 dark:hover:bg-gray-800"
               }`}
             >
-              <span className="text-sm font-semibold text-gray-900 dark:text-white">₹{tx.amount}</span>
+              <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                ₹{tx.amount}
+              </span>
 
               <span className="text-xs px-2 py-1 bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-200 rounded-full font-medium w-fit">
                 {tx.category}

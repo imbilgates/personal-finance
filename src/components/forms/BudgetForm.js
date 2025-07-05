@@ -4,9 +4,11 @@ import { CATEGORIES } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { useLoadingButton } from "@/hooks/useLoadingButton";
 import { Loader2 } from "lucide-react";
+import { showToast } from "@/lib/utils/toastUtils";
 
 export default function BudgetForm({ editing, onClose, onSave, onConflict }) {
   const { wrap, loading } = useLoadingButton();
+  
 
   const [form, setForm] = useState({
     category: "Other",
@@ -66,11 +68,26 @@ export default function BudgetForm({ editing, onClose, onSave, onConflict }) {
       });
 
       if (res.ok) {
+        showToast({
+          type: "success",
+          message: editing?._id
+            ? "Budget updated successfully"
+            : "Budget added successfully",
+        });
         onSave?.();
         onClose?.();
       } else if (res.status === 409) {
+        showToast({
+          type: "error",
+          message: "Duplicate Budget",
+          description: "A budget for this category and month already exists.",
+        });
         onConflict?.(form.category, form.month);
       } else {
+        showToast({
+          type: "error",
+          message: "Failed to save budget",
+        });
         setErrors({
           category: "Something went wrong. Please try again.",
         });
@@ -129,7 +146,12 @@ export default function BudgetForm({ editing, onClose, onSave, onConflict }) {
           {loading && <Loader2 className="animate-spin size-4 mr-2" />}
           {editing?._id ? "Update" : "Add"} Budget
         </Button>
-        <Button type="button" variant="secondary" onClick={onClose} disabled={loading}>
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={onClose}
+          disabled={loading}
+        >
           Cancel
         </Button>
       </div>
