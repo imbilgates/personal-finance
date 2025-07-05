@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { useFinance } from "@/context/FinanceContext";
 import { useLoadingButton } from "@/hooks/useLoadingButton";
+import { formatMonthYear } from "@/lib/utils/formatMonth"; 
 
 export default function BudgetList({ budgets, onEdit, highlightedId }) {
   const { fetchBudgets } = useFinance();
@@ -35,9 +36,14 @@ export default function BudgetList({ budgets, onEdit, highlightedId }) {
             }`}
           >
             <div>
-              <p className="font-medium">{budget.category}</p>
+              <p className="font-medium text-indigo-700 dark:text-indigo-400">
+                {budget.category}
+              </p>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                ₹{budget.amount} for {budget.month}
+                ₹{budget.amount} for{" "}
+                <span className="font-medium text-purple-600 dark:text-purple-400">
+                  {formatMonthYear(budget.month)}
+                </span>
               </p>
             </div>
             <div className="flex gap-2">
