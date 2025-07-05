@@ -7,8 +7,17 @@ import {
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CATEGORIES } from "@/lib/constants";
+import { useFinance } from "@/context/FinanceContext";
 
-export default function BudgetModal({ open, editing, onSave, onClose }) {
+export default function BudgetModal() {
+  const {
+    openBudgetModal,
+    setOpenBudgetModal,
+    budgetEditing,
+    setBudgetEditing,
+    fetchBudgets,
+  } = useFinance();
+
   const [form, setForm] = useState({
     category: "Other",
     amount: "",
@@ -16,16 +25,16 @@ export default function BudgetModal({ open, editing, onSave, onClose }) {
   });
 
   useEffect(() => {
-    if (editing && editing._id) {
+    if (budgetEditing && budgetEditing._id) {
       setForm({
-        category: editing.category,
-        amount: editing.amount.toString(),
-        month: editing.month,
+        category: budgetEditing.category,
+        amount: budgetEditing.amount.toString(),
+        month: budgetEditing.month,
       });
     } else {
       setForm({ category: "Other", amount: "", month: "" });
     }
-  }, [editing]);
+  }, [budgetEditing]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -35,9 +44,9 @@ export default function BudgetModal({ open, editing, onSave, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const method = editing?._id ? "PUT" : "POST";
-    const url = editing?._id
-      ? `/api/budgets/${editing._id}`
+    const method = budgetEditing?._id ? "PUT" : "POST";
+    const url = budgetEditing?._id
+      ? `/api/budgets/${budgetEditing._id}`
       : `/api/budgets`;
 
     const res = await fetch(url, {
@@ -47,15 +56,21 @@ export default function BudgetModal({ open, editing, onSave, onClose }) {
     });
 
     if (res.ok) {
-      onSave();
-      onClose();
+      fetchBudgets();
+      setOpenBudgetModal(false);
+      setBudgetEditing(null);
     }
   };
 
+  const handleClose = () => {
+    setOpenBudgetModal(false);
+    setBudgetEditing(null);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={openBudgetModal} onOpenChange={handleClose}>
       <DialogContent>
-        <DialogTitle>{editing?._id ? "Edit Budget" : "Add Budget"}</DialogTitle>
+        <DialogTitle>{budgetEditing?._id ? "Edit Budget" : "Add Budget"}</DialogTitle>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <select
@@ -63,7 +78,7 @@ export default function BudgetModal({ open, editing, onSave, onClose }) {
               value={form.category}
               onChange={handleChange}
               className="w-full p-2 rounded-md border"
-              disabled={!!editing?._id}
+              disabled={!!budgetEditing?._id}
             >
               {CATEGORIES.map((cat) => (
                 <option key={cat} value={cat}>
@@ -91,15 +106,15 @@ export default function BudgetModal({ open, editing, onSave, onClose }) {
               value={form.month}
               onChange={handleChange}
               className="w-full p-2 rounded-md border"
-              disabled={!!editing?._id}
+              disabled={!!budgetEditing?._id}
             />
           </div>
 
           <div className="flex justify-end gap-2">
             <Button type="submit">
-              {editing?._id ? "Update" : "Add"} Budget
+              {budgetEditing?._id ? "Update" : "Add"} Budget
             </Button>
-            <Button type="button" variant="secondary" onClick={onClose}>
+            <Button type="button" variant="secondary" onClick={handleClose}>
               Cancel
             </Button>
           </div>

@@ -1,6 +1,11 @@
 "use client";
 
-export default function SummaryCards({ transactions }) {
+import { useFinance } from "@/context/FinanceContext";
+
+export default function SummaryCards() {
+
+  const { transactions } = useFinance();
+
   const total = transactions.reduce((acc, tx) => acc + tx.amount, 0);
   const mostRecent = transactions.slice(0, 3);
   const categoryTotals = {};

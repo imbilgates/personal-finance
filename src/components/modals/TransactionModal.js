@@ -5,8 +5,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import TransactionForm from "../forms/TransactionForm";
+import { useFinance } from "@/context/FinanceContext";
 
-export default function TransactionModal({ editing, setEditing, onAdd }) {
+export default function TransactionModal() {
+  const { editing, setEditing, fetchTransactions } = useFinance();
+
   return (
     <Dialog open={!!editing} onOpenChange={() => setEditing(null)}>
       <DialogContent>
@@ -16,7 +19,7 @@ export default function TransactionModal({ editing, setEditing, onAdd }) {
         <TransactionForm
           editing={editing}
           setEditing={setEditing}
-          onAdd={onAdd}
+          onAdd={fetchTransactions}
         />
       </DialogContent>
     </Dialog>

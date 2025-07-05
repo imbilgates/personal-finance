@@ -1,7 +1,11 @@
 import MonthlyChart from "../charts/MonthlyChart";
 import CategoryPieChart from "../charts/CategoryPieChart";
+import { useFinance } from "@/context/FinanceContext";
 
-export default function ChartsSection({ transactions }) {
+export default function ChartsSection() {
+
+    const { transactions } = useFinance();
+  
   return (
     <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
       <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow-md">
