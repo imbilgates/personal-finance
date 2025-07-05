@@ -2,18 +2,33 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import TransactionModal from "@/components/modals/TransactionModal";
+import { useFinance } from "@/context/FinanceContext";
+import { useLoadingButton } from "@/hooks/useLoadingButton";
+import { Loader2 } from "lucide-react";
 
-export default function TransactionList({ transactions, onDelete, onEdit, editing, onAdd }) {
+export default function TransactionList({ transactions, onEdit, editing, onAdd }) {
   const [open, setOpen] = useState(false);
+  const { fetchTransactions } = useFinance();
+  const { wrap, loading } = useLoadingButton();
+  const [deletingId, setDeletingId] = useState(null);
 
   const handleEdit = (tx) => {
     onEdit(tx);
     setOpen(true);
   };
 
+  const handleDelete = (id) => {
+    setDeletingId(id);
+    wrap(async () => {
+      await fetch(`/api/transactions/${id}`, { method: "DELETE" });
+      await fetchTransactions();
+      setDeletingId(null);
+    });
+  };
+
   return (
     <div className="w-full">
-      {/* Header with increased spacing */}
+      {/* Header */}
       <div className="hidden sm:grid grid-cols-[100px_140px_140px_1fr_auto] font-medium text-sm text-gray-600 dark:text-gray-300 px-4 py-2 border-b gap-8">
         <span>Amount</span>
         <span>Category</span>
@@ -25,6 +40,7 @@ export default function TransactionList({ transactions, onDelete, onEdit, editin
       <ul className="space-y-2">
         {transactions.map((tx) => {
           const isEditing = editing && editing._id === tx._id;
+          const isDeleting = deletingId === tx._id;
 
           return (
             <li
@@ -46,15 +62,25 @@ export default function TransactionList({ transactions, onDelete, onEdit, editin
               <span className="text-sm text-gray-800 dark:text-gray-100">{tx.description}</span>
 
               <div className="flex gap-2 justify-end">
-                <Button variant="outline" size="sm" onClick={() => handleEdit(tx)}>Edit</Button>
-                <Button variant="destructive" size="sm" onClick={() => onDelete(tx._id)}>Delete</Button>
+                <Button variant="outline" size="sm" onClick={() => handleEdit(tx)}>
+                  Edit
+                </Button>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => handleDelete(tx._id)}
+                  disabled={isDeleting}
+                >
+                  {isDeleting && <Loader2 className="animate-spin size-4 mr-2" />}
+                  Delete
+                </Button>
               </div>
             </li>
           );
         })}
       </ul>
 
-      {/* Modal for edit/add transaction */}
+      {/* Modal for Add/Edit Transaction */}
       <TransactionModal
         editing={editing}
         onAdd={onAdd}

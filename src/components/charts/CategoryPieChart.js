@@ -16,15 +16,26 @@ export default function CategoryPieChart({ transactions }) {
   }));
 
   return (
-    <div>
-      <PieChart width={320} height={320}>
-        <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100}>
+    <div className="flex flex-col md:flex-row items-center justify-center gap-4">
+      <PieChart width={400} height={320}>
+        <Pie
+          data={data}
+          dataKey="value"
+          nameKey="name"
+          cx={120}
+          cy="50%"
+          outerRadius={100}
+        >
           {data.map((_, index) => (
             <Cell key={index} fill={COLORS[index % COLORS.length]} />
           ))}
         </Pie>
         <Tooltip />
-        <Legend />
+        <Legend
+          layout="vertical"
+          verticalAlign="middle"
+          align="right"
+        />
       </PieChart>
     </div>
   );

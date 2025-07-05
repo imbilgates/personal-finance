@@ -1,14 +1,12 @@
 "use client";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import TransactionForm from "../forms/TransactionForm";
 import { useFinance } from "@/context/FinanceContext";
+import { useLoadingButton } from "@/hooks/useLoadingButton";
 
-export default function TransactionModal() {
-  const { editing, setEditing, fetchTransactions } = useFinance();
+export default function TransactionModal({ editing, setEditing }) {
+  const { fetchTransactions } = useFinance();
+  const { wrap, loading } = useLoadingButton();
 
   return (
     <Dialog open={!!editing} onOpenChange={() => setEditing(null)}>
@@ -20,6 +18,8 @@ export default function TransactionModal() {
           editing={editing}
           setEditing={setEditing}
           onAdd={fetchTransactions}
+          wrap={wrap}
+          loading={loading}
         />
       </DialogContent>
     </Dialog>

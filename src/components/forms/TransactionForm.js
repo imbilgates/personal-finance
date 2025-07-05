@@ -2,15 +2,10 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { CATEGORIES } from "@/lib/constants";
+import { Loader2 } from "lucide-react";
 
-export default function TransactionForm({ onAdd, editing, setEditing }) {
-  const defaultForm = {
-    amount: "",
-    description: "",
-    date: "",
-    category: "Other",
-  };
-
+export default function TransactionForm({ onAdd, editing, setEditing, wrap, loading }) {
+  const defaultForm = { amount: "", description: "", date: "", category: "Other" };
   const [form, setForm] = useState(defaultForm);
   const [errors, setErrors] = useState({});
 
@@ -48,24 +43,26 @@ export default function TransactionForm({ onAdd, editing, setEditing }) {
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!validate()) return;
 
-    const method = editing && editing._id ? "PUT" : "POST";
-    const url = editing && editing._id
-      ? `/api/transactions/${editing._id}`
-      : "/api/transactions";
+    wrap(async () => {
+      const method = editing && editing._id ? "PUT" : "POST";
+      const url = editing && editing._id
+        ? `/api/transactions/${editing._id}`
+        : "/api/transactions";
 
-    await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      setForm(defaultForm);
+      setEditing(null);
+      onAdd();
     });
-
-    setForm(defaultForm);
-    setEditing(null);
-    onAdd();
   };
 
   const handleCancel = () => {
@@ -84,7 +81,7 @@ export default function TransactionForm({ onAdd, editing, setEditing }) {
           placeholder="Amount"
           value={form.amount}
           onChange={handleChange}
-          className="w-full p-2 rounded-md border border-gray-300 bg-white dark:bg-gray-900 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+          className="w-full p-2 rounded-md border"
         />
         {errors.amount && <p className="text-red-500 text-sm mt-1">{errors.amount}</p>}
       </div>
@@ -97,7 +94,7 @@ export default function TransactionForm({ onAdd, editing, setEditing }) {
           placeholder="Description"
           value={form.description}
           onChange={handleChange}
-          className="w-full p-2 rounded-md border border-gray-300 bg-white dark:bg-gray-900 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+          className="w-full p-2 rounded-md border"
         />
         {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
       </div>
@@ -109,7 +106,7 @@ export default function TransactionForm({ onAdd, editing, setEditing }) {
           name="date"
           value={form.date}
           onChange={handleChange}
-          className="w-full p-2 rounded-md border border-gray-300 bg-white dark:bg-gray-900 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+          className="w-full p-2 rounded-md border"
         />
         {errors.date && <p className="text-red-500 text-sm mt-1">{errors.date}</p>}
       </div>
@@ -120,7 +117,7 @@ export default function TransactionForm({ onAdd, editing, setEditing }) {
           name="category"
           value={form.category}
           onChange={handleChange}
-          className="w-full p-2 rounded-md border border-gray-300 bg-white dark:bg-gray-900 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+          className="w-full p-2 rounded-md border"
         >
           <option disabled value="">
             Select Category
@@ -135,11 +132,12 @@ export default function TransactionForm({ onAdd, editing, setEditing }) {
 
       {/* Buttons */}
       <div className="flex gap-2 justify-end">
-        <Button type="submit">
+        <Button type="submit" disabled={loading}>
+          {loading && <Loader2 className="animate-spin size-4 mr-2" />}
           {editing && editing._id ? "Update" : "Add"} Transaction
         </Button>
         {editing && (
-          <Button type="button" variant="secondary" onClick={handleCancel}>
+          <Button type="button" variant="secondary" onClick={handleCancel} disabled={loading}>
             Cancel
           </Button>
         )}
