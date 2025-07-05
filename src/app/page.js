@@ -1,14 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
-import SummaryCards from "@/components/SummaryCards";
-import TransactionList from "@/components/lists/TransactionList";
-import MonthlyChart from "@/components/charts/MonthlyChart";
-import CategoryPieChart from "@/components/charts/CategoryPieChart";
-import BudgetChart from "@/components/charts/BudgetChart";
-import BudgetList from "@/components/lists/BudgetList";
-import BudgetModal from "@/components/modals/BudgetModal";
 import TransactionModal from "@/components/modals/TransactionModal";
-import { Button } from "@/components/ui/button";
+import BudgetModal from "@/components/modals/BudgetModal";
+
+import SummaryCards from "@/components/dashboard/SummaryCards";
+import DashboardHeader from "@/components/dashboard/Header";
+import ChartsSection from "@/components/dashboard/ChartsSection";
+import BudgetVsActualSection from "@/components/dashboard/BudgetVsActual";
+import TransactionSection from "@/components/dashboard/TransactionSection";
+import BudgetSection from "@/components/dashboard/BudgetSection";
 
 export default function Home() {
   const [transactions, setTransactions] = useState([]);
@@ -46,70 +46,35 @@ export default function Home() {
 
   return (
     <main className="max-w-6xl mx-auto p-6 space-y-12">
-      <h1 className="text-3xl font-bold text-center">
-        💰 Personal Finance Tracker
-      </h1>
-
+      <DashboardHeader />
       <SummaryCards transactions={transactions} />
+      <ChartsSection transactions={transactions} />
+      <BudgetVsActualSection budgets={budgets} transactions={transactions} />
+      <TransactionSection
+        transactions={transactions}
+        onDelete={handleDelete}
+        onEdit={setEditing}
+        editing={editing}
+      />
+      <BudgetSection
+        budgets={budgets}
+        onEdit={(b) => {
+          setBudgetEditing(b);
+          setOpenBudgetModal(true);
+        }}
+        onDelete={handleBudgetDelete}
+        onAdd={() => {
+          setBudgetEditing(null);
+          setOpenBudgetModal(true);
+        }}
+      />
 
-      {/* 📊 Charts Section */}
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow-md">
-          <h2 className="text-lg font-semibold mb-2">📅 Monthly Spending</h2>
-          <MonthlyChart transactions={transactions} />
-        </div>
-        <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow-md">
-          <h2 className="text-lg font-semibold mb-2">
-            📈 Category-wise Spending
-          </h2>
-          <CategoryPieChart transactions={transactions} />
-        </div>
-      </section>
-
-      <section className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow-md">
-          <h2 className="text-lg font-semibold mb-2">🎯 Budget vs Actual</h2>
-
-        <BudgetChart budgets={budgets} transactions={transactions}/>
-      </section>
-
-      {/* 📋 Transaction History */}
-      <section className="bg-white dark:bg-gray-900 rounded-xl shadow-md p-4">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">📋 Transaction History</h2>
-          <Button onClick={() => setEditing({})}>➕ Add Transaction</Button>
-        </div>
-        <TransactionList
-          transactions={transactions}
-          onDelete={handleDelete}
-          onEdit={(tx) => setEditing(tx)}
-          editing={editing}
-        />
-      </section>
-
-      {/* 🧾 Budget Overview */}
-      <section className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow-md space-y-4">
-        <div className="flex justify-between items-center">
-          <h2 className="text-lg font-semibold">🧾 Budget Overview</h2>
-          <Button
-            onClick={() => {
-              setBudgetEditing(null); // null for adding new
-              setOpenBudgetModal(true);
-            }}
-          >
-            ➕ Add Budget
-          </Button>
-        </div>
-        <BudgetList
-          budgets={budgets}
-          onEdit={(b) => {
-            setBudgetEditing(b);
-            setOpenBudgetModal(true);
-          }}
-          onDelete={handleBudgetDelete}
-        />
-      </section>
-
-      {/* ✅ Budget Modal Final */}
+      {/* Modals */}
+      <TransactionModal
+        editing={editing}
+        setEditing={setEditing}
+        onAdd={fetchTransactions}
+      />
       <BudgetModal
         open={openBudgetModal}
         editing={budgetEditing}
@@ -122,13 +87,6 @@ export default function Home() {
           setOpenBudgetModal(false);
           setBudgetEditing(null);
         }}
-      />
-
-      {/* ✅ Transaction Modal */}
-      <TransactionModal
-        editing={editing}
-        setEditing={setEditing}
-        onAdd={fetchTransactions}
       />
     </main>
   );
