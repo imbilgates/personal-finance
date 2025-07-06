@@ -8,6 +8,7 @@ export const useFinance = () => useContext(FinanceContext);
 export function FinanceProvider({ children }) {
   const [transactions, setTransactions] = useState([]);
   const [budgets, setBudgets] = useState([]);
+  const [loading, setLoading] = useState(true); 
 
   const fetchTransactions = async () => {
     const res = await fetch("/api/transactions");
@@ -21,9 +22,14 @@ export function FinanceProvider({ children }) {
     setBudgets(data);
   };
 
+  const fetchAll = async () => {
+    setLoading(true);
+    await Promise.all([fetchTransactions(), fetchBudgets()]);
+    setLoading(false);
+  };
+
   useEffect(() => {
-    fetchTransactions();
-    fetchBudgets();
+    fetchAll();
   }, []);
 
   return (
@@ -33,6 +39,7 @@ export function FinanceProvider({ children }) {
         budgets,
         fetchTransactions,
         fetchBudgets,
+        loading, 
       }}
     >
       {children}
