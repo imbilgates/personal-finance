@@ -6,9 +6,16 @@ import { useLoadingButton } from "@/hooks/useLoadingButton";
 import { Loader2 } from "lucide-react";
 import { showToast } from "@/lib/utils/toastUtils";
 
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+
 export default function BudgetForm({ editing, onClose, onSave, onConflict }) {
   const { wrap, loading } = useLoadingButton();
-  
 
   const [form, setForm] = useState({
     category: "Other",
@@ -98,19 +105,24 @@ export default function BudgetForm({ editing, onClose, onSave, onConflict }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <select
-          name="category"
+        <Select
           value={form.category}
-          onChange={handleChange}
-          className="w-full p-2 rounded-md border"
+          onValueChange={(value) =>
+            handleChange({ target: { name: "category", value } })
+          }
           disabled={!!editing?._id}
         >
-          {CATEGORIES.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select Category" />
+          </SelectTrigger>
+          <SelectContent>
+            {CATEGORIES.map((cat) => (
+              <SelectItem key={cat} value={cat}>
+                {cat}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div>

@@ -5,6 +5,14 @@ import { CATEGORIES } from "@/lib/constants";
 import { Loader2 } from "lucide-react";
 import { showToast } from "@/lib/utils/toastUtils";
 
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+
 export default function TransactionForm({
   onAdd,
   editing,
@@ -148,21 +156,23 @@ export default function TransactionForm({
 
       {/* Category Dropdown */}
       <div>
-        <select
-          name="category"
-          value={form.category}
-          onChange={handleChange}
-          className="w-full p-2 rounded-md border"
+        <Select
+          value={form.category || ""}
+          onValueChange={(value) =>
+            handleChange({ target: { name: "category", value } })
+          }
         >
-          <option disabled value="">
-            Select Category
-          </option>
-          {CATEGORIES.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select Category" />
+          </SelectTrigger>
+          <SelectContent>
+            {CATEGORIES.map((cat) => (
+              <SelectItem key={cat} value={cat}>
+                {cat}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Buttons */}
