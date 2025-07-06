@@ -1,150 +1,127 @@
-# 💰 Personal Finance Visualizer - Stage 1
+💰 Personal Finance Visualizer
+A full-stack finance tracking application built with Next.js, MongoDB, Recharts, and ShadCN UI. Developed as part of a Full-stack Developer Internship Assignment.
 
-A full-stack finance tracker application built with **Next.js**, **MongoDB**, **Recharts**, and **ShadCN UI**. This project is submitted as part of the Full-stack Developer Internship Assignment.
+🌟 Project Overview
+The Personal Finance Visualizer helps users manage their daily expenses, categorize spending, and set monthly budgets. It offers a clean dashboard UI with charts, summaries, modals, and responsive design.
 
----
+✅ Stage 1: Core Transactions
+🔨 Features Implemented
+✅ Add new transaction (amount, description, date)
 
-## 🚀 Features Implemented (Stage 1)
+✅ View all transactions in a list
 
-✅ Add new transaction (amount, description, date)  
-✅ View all transactions in a list  
-✅ Edit and delete individual transactions  
-✅ Monthly expense bar chart using Recharts  
-✅ Responsive design (mobile + desktop)  
-✅ Form validation for user inputs  
-✅ Clean and modern UI with TailwindCSS & shadcn/ui  
+✅ Edit and delete individual transactions
 
----
+✅ Form validation and error handling
 
-## 🛠️ Tech Stack
+✅ Monthly expense bar chart (via Recharts)
 
-| Layer       | Technology |
-|-------------|------------|
-| Frontend    | Next.js (App Router), React |
-| Styling     | Tailwind CSS, ShadCN UI |
-| Charts      | Recharts |
-| Backend     | API Routes in Next.js |
-| Database    | MongoDB Atlas |
-| Deployment  | Vercel |
+✅ Responsive design for mobile and desktop
 
----
+✅ Styled inputs using ShadCN UI
 
+✅ Clean, modern UI with TailwindCSS
 
-💰 Personal Finance Visualizer - Stage 2
-A feature-rich full-stack personal finance tracker built with Next.js, MongoDB, Recharts, and ShadCN UI. This project is developed as part of the Full-stack Developer Internship Assignment.
+✅ Stage 2: Category Support & Dashboard
+🔄 Transaction Enhancements
+✅ Added category field to transactions
 
-🚀 Features Implemented (Stage 2 ✅)
-🔄 Core Transaction Features
-✅ Add, edit, and delete transactions
+✅ Styled dropdown for category selection
 
-✅ Each transaction has: amount, description, date, and new category field
+✅ Updated transaction list UI with category badges
 
-✅ Form validation for all fields
+✅ Highlight edited row in transaction list
 
 📊 Data Visualization
-✅ Monthly Bar Chart of expenses (via Recharts)
+✅ Category-wise Pie Chart
 
-✅ Category-wise Pie Chart to visualize spending patterns
+✅ Improved Monthly Bar Chart with dynamic data
 
-✅ Charts are responsive and adapt to mobile/tablet/desktop
+✅ Fully responsive charts (Recharts)
 
-📋 Transaction List UI
-✅ Responsive, clean layout
+📌 Dashboard Enhancements
+✅ Total Expense card
 
-✅ Displays amount, date, description, category (like a table)
+✅ Top Spending Category card
 
-✅ Highlighting row on edit
+✅ Most Recent Transactions card
 
-✅ Category badge design
+💄 UI & UX Improvements
+✅ Smooth scroll to edit form
 
-📌 Dashboard Summary
-✅ Total Expense
+✅ Styled error messages
 
-✅ Top Spending Category
+✅ Fully mobile-first layout
 
-✅ Most Recent Transactions
+✅ Stage 3: Budgeting & UX Polish
+💸 Budget Management
+✅ Add, edit, and delete monthly budgets
 
-💅 UI & UX
-✅ Styled dropdown for categories
+✅ Prevent duplicate (category + month) budgets
 
-✅ Styled date input
+✅ Validation for budget amount and date
 
-✅ Input focus, validation, and error messages
+✅ Radix-based Budget Modal for smooth UX
 
-✅ Smooth scroll to form on edit
+✅ Clean layout for budget list with month and category
 
-✅ Fully responsive design (mobile-first)
+📊 Budget Visualization
+✅ Budget vs Actual chart (category-wise comparison)
 
-📊 Sample Categories
-    [Food, Travel, Shopping, Bills, Entertainment, Health, Education, Other]
+✅ All charts styled and responsive
 
+📋 Dashboard Layout
+✅ Transaction section with edit/delete actions
 
+✅ Budget section with highlight for conflicts
 
+✅ One-click modals for both add/edit operations
 
-💰 Personal Finance Visualizer - Stage 3
-A complete full-stack personal finance tracker with budgeting, analytics, and modern UI/UX. Built using Next.js, MongoDB, Recharts, and ShadCN UI, this project is the final Stage 3 submission for the Full-stack Developer Internship Assignment.
+🌈 UI/UX Polish
+✅ Integrated Sonner for toast notifications
 
-🚀 Features Implemented (Stage 3 ✅)
-🔄 Transaction Management
-✅ Full CRUD for transactions: add, edit, delete
+✅ Loading spinners (lucide-react) for button actions
 
-✅ Each transaction has: amount, description, date, category
+✅ Skeleton UI while fetching dashboard data
 
-✅ Validation with proper input types and error messages
+✅ Dark mode support via Tailwind
 
-✅ Modal-based form for clean UX
+✅ All modals, buttons, and inputs powered by ShadCN & Radix Dialog
 
-💸 Budgeting System (NEW in Stage 3)
-✅ Set monthly budgets for specific categories
+🔄 State & Logic
+✅ Context API used to manage global transaction/budget state
 
-✅ Edit and delete budgets with validation
+✅ Local state for modal visibility and editing logic
 
-✅ Prevent duplicate category+month combinations
+✅ Fetching and mutation wrapped in reusable useLoadingButton() hook
 
-✅ Budget modal form integrated with Radix UI & ShadCN
-
-✅ Responsive budget list UI with clean layout
-
-📊 Data Visualizations
-✅ Monthly Bar Chart for tracking expenses month-wise
-
-✅ Category Pie Chart for understanding category-wise spending
-
-✅ Budget vs Actual Chart showing spending vs. set budget by category
-
-✅ All charts are mobile-responsive using Recharts
-
-📋 Transaction & Budget UI
-✅ Responsive, clean layout for transaction list and budget overview
-
-✅ Transaction badges for categories
-
-✅ Budget list with category, amount, and month
-
-✅ One-click modals for both adding and editing
-
-📌 Dashboard Summary
-✅ Total expenses for the current data
-
-✅ Top spending category dynamically calculated
-
-✅ Display of 3 most recent transactions
-
-💅 UI/UX Enhancements
-✅ ShadCN components for modals, buttons, inputs
-
-✅ TailwindCSS-based clean, dark-mode-friendly styling
-
-✅ Mobile-first responsive layout
-
-✅ Smooth modals for better form experience
+✅ Reusable showToast() utility for toasts
 
 🛠️ Tech Stack
 Layer	Technology
 Frontend	Next.js (App Router), React
-Styling	Tailwind CSS, ShadCN UI, Radix Dialog
+Styling	TailwindCSS, ShadCN UI, Radix Dialog
 Charts	Recharts
-Backend	API Routes (Next.js)
+State Mgmt	React Context API
+Backend	API Routes in Next.js
 Database	MongoDB Atlas
 Deployment	Vercel
+Notifications	Sonner
 
+🌱 Future Enhancements
+🔐 User authentication & multi-user accounts
+
+📁 Export transactions as CSV/Excel
+
+📈 Yearly trends visualization
+
+📅 Recurring transactions support
+
+🧠 AI-based spending insights
+
+🗃️ Pagination and filtering
+
+🌍 Localization and multi-currency support
+
+🚀 Deployment
+This project is deployed on Vercel for fast, global access.
